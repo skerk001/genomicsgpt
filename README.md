@@ -42,6 +42,44 @@ User Input (HGVS, VCF, rsID, etc.)
 └─────────────────┘
 ```
 
+---
+
+## Model Performance
+
+<div align="center">
+<img src="data/models/plots/roc_curves.png" width="420"/> <img src="data/models/plots/pr_curves.png" width="420"/>
+</div>
+
+<div align="center">
+<img src="data/models/plots/confusion_matrices.png" width="420"/> <img src="data/models/plots/score_distribution.png" width="420"/>
+</div>
+
+<div align="center">
+<em>XGBoost, LightGBM, and Ensemble ROC/PR curves, confusion matrices, and pathogenicity score distributions. Full notebook: <a href="notebooks/03_model_training.ipynb">03_model_training.ipynb</a></em>
+</div>
+
+---
+
+## SHAP Explainability
+
+<div align="center">
+<img src="data/models/plots/shap_importance.png" width="420"/> <img src="data/models/plots/shap_beeswarm.png" width="420"/>
+</div>
+
+<div align="center">
+<em>Top features by mean |SHAP| value with beeswarm plot showing feature-level impact on pathogenicity prediction.</em>
+</div>
+
+**Top predictive features:**
+
+1. **cons_synonymous** — Silent mutations strongly predict benign
+2. **is_lof** — Loss-of-function variants strongly predict pathogenic
+3. **gene_path_ratio** — Gene constraint score
+4. **cons_intronic** — Deep intronic variants lean benign
+5. **num_submitters** — Expert review signal
+
+---
+
 ## LLM Clinical Report Generation
 
 The LLM engine takes ML predictions + database evidence and generates structured clinical interpretation reports following ACMG/AMP guidelines.
@@ -70,17 +108,9 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 python demo_report.py "BRAF V600E"
 ```
 
-## ML Pipeline
+---
 
-The classifier is trained on **1.69 million labeled ClinVar variants** (GRCh38) with 40 engineered features:
-
-- **Variant type** — SNV, deletion, duplication, etc.
-- **Molecular consequence** — missense, nonsense, frameshift, synonymous, splice
-- **Loss-of-function flag** — aggregate LoF signal
-- **Gene constraint** — pathogenic variant ratio per gene
-- **Review quality** — ClinVar submitter count and star rating
-
-### Feature Ablation Study
+## Feature Ablation Study
 
 | Feature Set | AUC-ROC |
 |---|---|
@@ -91,15 +121,13 @@ The classifier is trained on **1.69 million labeled ClinVar variants** (GRCh38) 
 
 Molecular consequence features independently achieve **0.97 AUC**, confirming the model learns biological patterns (LoF → pathogenic, synonymous → benign) rather than memorizing gene-specific statistics.
 
-### SHAP Explainability
+---
 
-Top predictive features with biological interpretation:
+## ML Pipeline
 
-1. **cons_synonymous** — Silent mutations strongly predict benign
-2. **is_lof** — Loss-of-function variants strongly predict pathogenic
-3. **gene_path_ratio** — Gene constraint score
-4. **cons_intronic** — Deep intronic variants lean benign
-5. **num_submitters** — Expert review signal
+The classifier is trained on **1.69 million labeled ClinVar variants** (GRCh38) with 40 engineered features across 9 categories: variant type, molecular consequence, loss-of-function flags, allele length, position, chromosome, review quality, gene constraint, and HGVS complexity.
+
+---
 
 ## Project Structure
 
@@ -142,18 +170,6 @@ python train_pipeline.py
 # Run the interactive notebook
 jupyter notebook notebooks/03_model_training.ipynb
 ```
-
-## Notebook
-
-The Jupyter notebook (`notebooks/03_model_training.ipynb`) contains the complete, reproducible ML pipeline:
-
-1. Data loading and EDA (class distribution, chromosome analysis, top genes)
-2. Feature engineering (40 features across 9 categories)
-3. Model training (XGBoost + LightGBM + Ensemble)
-4. Evaluation (ROC, PR, confusion matrices, score distribution)
-5. SHAP explainability (beeswarm, bar importance, dependence plots, force plots)
-6. Rigorous evaluation (leakage correction, feature ablation)
-7. Cross-validation (5-fold stratified)
 
 ## Tech Stack
 
