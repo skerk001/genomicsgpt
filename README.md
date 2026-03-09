@@ -184,4 +184,4 @@ jupyter notebook notebooks/03_model_training.ipynb
 
 **Samir Kerkar** — [github.com/skerk001](https://github.com/skerk001)
 
-Clinical Data Analyst | B.S. Mathematics UC Irvine
+Data Scientist | B.S. Mathematics UC Irvine
